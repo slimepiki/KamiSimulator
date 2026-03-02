@@ -54,6 +54,10 @@ cd bin
 ./kami ../scripts/json/KamiSetting.json
 ```
 
+## for more details
+
+See [Table of Contents for KamiSimulator Guides](doc/toc.md)
+
 ## citations
 
 - Digital-Salon
