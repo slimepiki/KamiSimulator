@@ -4,6 +4,10 @@ This is a hair simulator which can compare different models e.g. Augmented Mass 
 
 <video src="img/demo.mp4" controls="true"></video>
 
+
+https://github.com/user-attachments/assets/99574c63-40f9-47e6-b0ce-2d236b428f0f
+
+
 ## How to build
 
 Before proceeding to the installation steps, make sure you have CUDA Toolkit 11.6 (or later) installed on your machine. Please follow the [installation guide](https://docs.nvidia.com/cuda/) provided by NVIDIA for Microsoft Windows or Linux.
