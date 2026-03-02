@@ -1,0 +1,23 @@
+{
+    "BodyPath": "../resources/hairstyles/head_model.obj",
+    "BodyType": "HEAD_ONLY",
+    "BoxMin": [
+        1.2,
+        1.2,
+        1.2
+    ],
+    "EnableLog": false,
+    "HairPath": "../resources/hairstyles/strands00001.data",
+    "OutputType": "VIDEO_ONLY",
+    "SimulationTimings": [
+        2,
+        60,
+        4
+    ],
+    "SolverModel": "AUG_MASS_SPRING",
+    "SolverSettingPath": "../scripts/json/AMSSetting.json",
+    "HairSize": [
+        10000,
+        100
+    ]
+}

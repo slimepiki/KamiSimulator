@@ -1,0 +1,20 @@
+{
+    "OutputNamePrefix": "test",
+    "OutputType": "VIDEO_ONLY",
+    "BodyPath": "../resources/hairstyles/head_model.obj",
+    "BodyType": "HEAD_ONLY",
+    "BoxMin": [
+        1.2,
+        1.2,
+        1.2
+    ],
+    "EnableLog": true,
+    "HairPath": "../resources/hairstyles/strands00015.data",
+    "SimulationTimings": [
+        2,
+        60,
+        1
+    ],
+    "SolverModel": "STABLE_COSSERAT_RODS",
+    "SolverSettingPath": "../scripts/json/StCossRods.json"
+}

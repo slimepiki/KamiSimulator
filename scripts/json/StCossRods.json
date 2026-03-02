@@ -1,0 +1,23 @@
+{
+    "EnableResample": true,
+    "EnableSDF": true,
+    "EnableHairHairColl": false,
+    "UseYoungsModule": true,
+    "NumItr": 32,
+    "SagFreeItr": 1,
+    "SubdivCoeff": 3,
+    "StretchK": 3e3,
+    "BendK": 6e-4,
+    "YoungsModule": 5,
+    "StiffnessDeviationCoeff": 1,
+    "CurveRadius": 4e-5,
+    "Density": 1.3e6,
+    "ResampleLen": 1e-3,
+    "VelocityDecay": 0.05,
+    "ExternalForceMultiplier": 1,
+    "WindPeak": 40,
+    "WindYFreq": 1,
+    "WindZFreq": 0.7,
+    "WindTimeFreq": 0.4,
+    "WindSharpness": 3.0
+}

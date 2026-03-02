@@ -1,0 +1,42 @@
+{
+    "OutputNamePrefix": "test",
+    "OutputType": "VIDEO_ONLY",
+    "BodyPath": "../resources/hairstyles/head_model.obj",
+    "BodyType": "HEAD_ONLY",
+    "BoxMin": [
+        1.2,
+        1.2,
+        1.2
+    ],
+    "EnableLog": true,
+    "HairPath": "../resources/hairstyles/strands00016.data",
+    "SimulationTimings": [
+        2,
+        60,
+        1
+    ],
+    "CameraPos": [
+        0,
+        1.4,
+        2.5
+    ], 
+    "CameraLookAt": [
+        0,
+        1.4,
+        0
+    ],    
+    "CameraUp": [
+        0,
+        1,
+        0
+    ],
+    "SolverModel": "STABLE_COSSERAT_RODS",
+    "SolverSettingPath": "../scripts/json/StCossRods.json",
+    "HairSize": [
+        10000,
+        100
+    ],
+    "DoConsecutiveExperiments": true,
+    "ConsecutiveExperimentsJsonPath": "../scripts/json/ConsecStCoss.json",
+    "ConsecExpBaseJsonPath": "../scripts/json/ConsecStCossBase.json"
+}

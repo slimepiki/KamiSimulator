@@ -1,0 +1,24 @@
+{
+	"ResultNamePrefix": "SCR",
+	"NumOfAxis": 2,
+	"Axis1Type": "float",
+	"Axis2Type": "float",
+	"Axis1Key": "YoungsModule",
+	"Axis2Key": "StiffnessDeviationCoeff",
+	"Axis1Val": [
+		0.5,
+		1,
+		3,
+		5
+	],
+	"Axis2Val": [
+		0.03125,
+		0.125,
+		0.25,
+		0.5,
+		1,
+		1.5,
+		2,
+		10
+	]
+}

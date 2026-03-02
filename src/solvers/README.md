@@ -1,0 +1,2 @@
+Any solver's constructor just have to set shared_ptr of KamiSimulator.
+Initialization of the solver should be done at ```Solver::Construct()``` that is called from ```HairBodySimulation::ConfirmSimulationEnvironment()```.

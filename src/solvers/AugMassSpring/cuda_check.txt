@@ -1,0 +1,147 @@
+?????????????????????
+struct InterParticle {
+    int2 VboIdx;
+    int2 InterIdx;
+    float Lambda;
+};
+?????????????????????
+
+struct SimulationParams {
+    size_t NumGridCells;   // number of grid voxels
+    size_t NumGridCellsU;  // number of grid voxels for staggered grids
+    size_t NumGridCellsV;
+    size_t NumGridCellsW;
+
+    // Sdf Grid
+    float LengthIncreaseGrid;  // percentage of grid increase w.r.t. loaded obj
+    float ThreshSdf;           // small threshold for head collision
+    int3 SdfDim;               // grid dimensions (nx, ny, nz)
+    float3 SdfDs;              // grid step sizes (dx, dy, dz)
+    float3 SdfInvDs;           // inverse step sizes (1/dx, 1/dy, 1/dz)
+    float3 SdfInvSqDs;         // inverse squared step sizes (1/dx^2,1/dy^2,1/dz^2)
+
+    // Eulerian hair
+    int3 HairDim;                      // grid dimensions (nx,ny,nz)
+    float3 HairDs;                     // grid step sizes (dx,dy,dz)
+    float3 HairInvDs;                  // inverse step sizes (1/dx, 1/dy, 1/dz)
+    float3 HairInvSqDs;                // inverse squared step sizes (1/dx^2,1/dy^2,1/dz^2)
+    float3 HairAxis[3], HairAxis0[3];  // grid orientation (e_x, e_y, e_z)
+    float3 HairOrig, HairOrig0;        // grid local origin (0,0,0)
+    float3 HairCenter, HairCenter0;    // grid center
+
+    // PIC/FLIP parameters
+    int NumGridNeighbors;  // number of neighbors to look for in particle2grid routine
+    float MaxWeight;       // maximum node weight
+    int NumStepsJacobi;    // number of iterations for Jacobi pressure solver
+    float JacobiWeight;    // (0,1] weight in Jacobi solver
+    float FlipWeight;      // (0,1) control of FLIP-PIC grid2particle weight
+    int Parity;            // Sdf parity (to avoid buggs if mesh was inverted)
+
+    // Physical Parameters
+    float Dt;          // time step (s)
+    float InvDt;       // inverse time step (s^{-1})
+    float3 WindSpeed;  // wind intensity (m/s)
+    float Gravity;     // gravity constant (m/s^2)
+    float Damping;   // particle damping
+    float HairMass;  // mass (kg)
+    float Mu;        // inverse hair mass (kg^{-1})
+    float Friction;  // friction coef. of head
+
+    // Animation
+    bool MeshSequence;   // tracks if there is a loaded mesh sequence
+    float SimEndTime;    // stop animation here
+    float SimTime;       // 'inside' simulation time
+    float AnimDuration;  // time duration of animation
+    int NumFrames;       // number of frames for mesh sequence
+    float3 RootMove;
+
+    // Toogle Debug
+    bool SolidCollision;
+    bool HairCollision;
+    bool DrawHead;
+    bool DrawHeadWF;
+};
+
+// Init/set variables
+void launchKernelResetParticles(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelInitParticles(const int2& blockThread, DeviceBuffers buffers);
+
+// Integration
+void launchKernelFillMatrices(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelSolveVelocity(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelPositionUpdate(const int2& blockThread, DeviceBuffers buffers);
+
+// Eulerian solver
+void launchKernelSegmentToGrid(const int2& blockThreadParticles, const int2& blockThreadGrid, const int2& blockThreadU, const int2& blockThreadV,
+                               const int2& blockThreadW, DeviceBuffers buffers);
+void launchKernelGridToParticle(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelProjectVelocity(const int2& blockThreadGrid, const int2& blockThreadU, const int2& blockThreadV, const int2& blockThreadW,
+                                 const int& numIter, DeviceBuffers buffers);
+
+// Hair-solir solver
+void launchKernelHeadCollision(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelNablaSdf(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelInitHeadVel(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelInitHeadVerticesVel(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelUpdateVelocitySdf(const int2& blockThreadSdf, const int2& blockThreadVertices, DeviceBuffers buffers);
+
+// Additional dynamics
+void launchKernelStrainLimiting(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelSwapPositions(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelMoveRoots(const int2& blockThread, DeviceBuffers buffers);
+void launchKernelUpdateMesh(const int2& blockThread, DeviceBuffers buffers);
+
+// Grooming
+void launchKernelCutHair(const int2& blockThread, DeviceBuffers buffers);
+
+// Animation
+void launchKernelUpdateRootsSeq(const int2& blockthread, DeviceBuffers buffers);
+void launchKernelUpdateAnimSeq(const int2& blockthread, const int& a, const int& b, const float& lambda, DeviceBuffers buffers);
+
+// Host helpers
+void launchKernelSetRandom(const int2& blockThread, curandState* state);
+void copySimParamsToDevice(SimulationParams* hostParams);
+
+// Computations
+__host__ __device__ float3 BaryCoordinates(const float3& p, const float3& a, const float3& b, const float3& c);
+__device__ float3 ExtForce(const int& globalI, const DeviceBuffers& buffers);
+__device__ float3 SprForce(const int& globalI, const DeviceBuffers& buffers);
+__device__ float3 SprForce(const int& globalI, const int& globalJ, const int& restIdx, const DeviceBuffers& buffers);
+__device__ Mat3 DirMat(const int& globalI, const int& globalJ, const DeviceBuffers& buffers);
+__device__ int3 PosToCellSdf(const float3& p);
+__device__ int3 PosToCell(const float3& p);
+__device__ float3 NormalPos(const float3& p, const int3& cellIdx);
+__device__ bool CellInsideGrid(const int3& idx);
+__device__ bool CellOutsideInfluence(const int3& idx);
+__device__ float DistancePointSegment(const float3& A, const float3& B, const float3& u, float& t);
+
+// Samplers
+__inline__ __device__ Mat3 SampleA(const int& globalI, const int& globalJ, const DeviceBuffers& buffers);
+__inline__ __device__ Mat3 SampleL(const int& globalI, const int& globalJ, const DeviceBuffers& buffers);
+__inline__ __device__ Mat3 SampleU(const int& globalI, const int& globalJ, const DeviceBuffers& buffers);
+__inline__ __device__ float3 SampleV(const int& globalI, const DeviceBuffers& buffers);
+__device__ float3 SampleHairPIC(const int3& idx, const DeviceBuffers& buffers);
+__device__ float3 SampleHairVel(const int3& idx, const DeviceBuffers& buffers);
+__device__ float3 SampleHairFLIP(const int3& idx, const DeviceBuffers& buffers);
+__device__ float SamplePressure(const int3& idx, const DeviceBuffers& buffers);
+__device__ float4 TriInterpSdf(const int3& idx, const float3& pos, const DeviceBuffers& buffers);
+__device__ float3 TriInterSdfVel(const int3& idx, const float3& pos, const DeviceBuffers& buffers);
+__device__ float3 SampleNablaSdf(const int3& idx, const DeviceBuffers& buffers);
+__device__ float SampleSdf(const int3& idx, const DeviceBuffers& buffers);
+__device__ float4 SampleTotalSdf(const int3& idx, const DeviceBuffers& buffers);
+__device__ float3 SampleSdfVel(const int3& idx, const DeviceBuffers& buffers);
+
+// Indices
+__inline__ __device__ int IdxA(const int& globalI, const int& globalJ);
+__inline__ __device__ int IdxL(const int& globalI, const int& globalJ);
+__inline__ __device__ int IdxU(const int& globalI, const int& globalJ);
+__inline__ __device__ int3 Idx3DU(const int& idx);
+__inline__ __device__ int3 Idx3DV(const int& idx);
+__inline__ __device__ int3 Idx3DW(const int& idx);
+__inline__ __device__ int3 Idx3D(const int& idx);
+__inline__ __device__ int3 Idx3DSdf(const int& idx);
+__inline__ __device__ int Idx1DU(const int3& idx);
+__inline__ __device__ int Idx1DV(const int3& idx);
+__inline__ __device__ int Idx1DW(const int3& idx);
+__inline__ __device__ int Idx1D(const int3& idx);
+__inline__ __device__ int Idx1DSdf(const int3& idx);

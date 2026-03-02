@@ -1,0 +1,52 @@
+<scene version="3.0.0">
+
+	<integrator type="path">
+		<integer name="max_depth" value="65" />
+	</integrator>
+
+	<sensor type="perspective">
+
+		<transform name="to_world">
+			<lookat origin="0, 1.6, 2.2" target="0, 1.6, 0" up="0, 1, 0" />
+		</transform>
+
+		<sampler type="independent">
+			<integer name="sample_count" value="256" />
+		</sampler>
+
+		<film type="hdrfilm">
+			<integer name="width" value="960" />
+			<integer name="height" value="540" />
+			<string name="file_format" value="exr" />
+			<string name="pixel_format" value="rgb" />
+			<rfilter type="tent" />
+		</film>
+
+	</sensor>
+
+	<!--head-->
+	<shape type="obj">
+		<string name="filename" value="head.obj" />
+		<bsdf type="diffuse">
+			<spectrum name="reflectance" filename="HumanEpidermis.spd" />
+		</bsdf>
+	</shape>
+
+	<!--hair-->
+	<shape type="linearcurve">
+		<string name="filename" value="hair.mcur" />
+		<bsdf type="hair">
+		</bsdf>
+	</shape>
+
+	<!--area_light-->
+
+	<emitter type="constant">
+		<rgb name="radiance" value="1.0" />
+	</emitter>
+
+	<emitter type="directional">
+		<vector name="direction" value="-0.19033, -0.758426, 0.623349" />
+		<rgb name="irradiance" value="19.091171, 19.091171, 19.091171" />
+	</emitter>
+</scene>
